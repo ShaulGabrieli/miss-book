@@ -2,14 +2,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(255, 138, 138);
+    background-color: rgb(25, 53, 62);
     color: azure;
     width: 300px;
     margin: 10px;
     padding: 20px;
     text-align: center;
+    height: 450px;
 }
 
 .book-preview img{
     width: 150px
+}
+
+.book-preview p{
+    flex-grow: 1;
 }

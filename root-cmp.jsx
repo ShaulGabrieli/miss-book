@@ -24,7 +24,7 @@ export function App() {
                     </a>
                 </nav>
             </header>
-            <main>
+            <main className='main-layout' >
                 {page === 'home' && <HomePage />}
                 {page === 'about' && <AboutUs />}
                 {page === 'book' && <BookIndex />}

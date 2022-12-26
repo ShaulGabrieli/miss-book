@@ -2,15 +2,15 @@ import { BookPreview } from './book-preview.jsx'
 
 export function BookList({ books, onSelectBook }) {
 
-    return <ul className="book-list">
+    return <section className="book-list grid-container">
         {
-            books.map(book => <li key={book.id}>
+            books.map(book => <article key={book.id}>
             
             <BookPreview book={book}/>
                 <div>
                 <button onClick={() => onSelectBook(book.id)}>More info</button>
                 </div>
-            </li>)
+            </article>)
         }
-    </ul>
+    </section>
 }

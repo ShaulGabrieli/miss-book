@@ -26,6 +26,14 @@
     color: var(--clr1);
 }
 
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
 /* list helpers */
 
 .clean-list {
@@ -55,3 +63,4 @@
 .fa.fa-behance::before {
     content: "\f1b4";
 }
+
