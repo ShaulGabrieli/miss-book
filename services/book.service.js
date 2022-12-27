@@ -9,8 +9,13 @@ export const bookService = {
     query,
     get,
     save,
-    getEmptyCar,
     getDefaultFilter,
+    remove,
+    getEmptyBook,
+    getDefaultReview,
+    saveReview,
+    removeReview,
+    getNextBookId
 }
 
 function query(filterBy = getDefaultFilter()) {
@@ -31,27 +36,92 @@ function get(bookId) {
 
 }
 
+function getNextBookId(bookId) {
+  return storageService.query(BOOK_KEY)
+      .then(books => {
+          var idx = books.findIndex(book => book.id === bookId)
+          if (idx === books.length - 1) idx = -1
+          return books[idx + 1].id
+      })
+}
+
 function remove(bookId) {
     return storageService.remove(BOOK_KEY, bookId)
 }
 
 function save(book) {
     if (book.id) {
-        return storageService.put(BOOK_KEY, books)
+        return storageService.put(BOOK_KEY, book)
     } else {
-        return storageService.post(BOOK_KEY, books)
+        return storageService.post(BOOK_KEY, book)
     }
 }
 
-function getEmptyCar(vendor = '', maxSpeed = '') {
-    return { id: '', vendor, maxSpeed }
+// function getEmptyBook(title = '', price = '') {
+//     return { id: '', title, price }
+// }
+
+function getEmptyBook(title) {
+  return {
+    id: '',
+    title,
+    subtitle:'',
+    authors: '',
+    publishedDate: '',
+    "description": "lorem molestie ut euismod ad quis mi ultricies nisl cursus suspendisse dui tempor sit suscipit metus etiam euismod tortor sagittis habitant",
+    pageCount: 100,
+    categories: [],
+    thumbnail: "http://coding-academy.org/books-photos/2.jpg",
+    language: "en",
+    listPrice: {
+      amount:0,
+      currencyCode: "USD",
+      isOnSale: false
+    }
+  }
 }
 
 function getDefaultFilter() {
     return { txt: '', price: '' }
 }
 
+function getDefaultReview() {
+  return { fullName: '', rating: 0, readAt: '', id: '' }
+}
 
+
+function saveReview(bookId, reviewToSave) {
+  const books = _loadBooksFromStorage()
+  const book = books.find((book) => book.id === bookId)
+  const review = _createReview(reviewToSave)
+  book.reviews.unshift(review)
+  _saveBooksToStorage(books)
+  return Promise.resolve(review)
+}
+
+function removeReview(bookId, reviewId) {
+  let books = _loadBooksFromStorage()
+  let book = books.find((book) => book.id === bookId)
+  const newReviews = book.reviews.filter((review) => review.id !== reviewId)
+  book.reviews = newReviews
+  _saveBooksToStorage(books)
+  return Promise.resolve()
+}
+
+function _createReview(reviewToSave) {
+  return {
+    id: utilService.makeId(),
+    ...reviewToSave,
+  }
+}
+
+function _saveBooksToStorage(books) {
+  storageService.saveToStorage(BOOK_KEY, books)
+}
+
+function _loadBooksFromStorage() {
+  return storageService.loadFromStorage(BOOK_KEY)
+}
 
 function _createBook(vendor, maxSpeed = 250) {
     const car = getEmptyCar(vendor, maxSpeed)
@@ -505,7 +575,10 @@ function _createBooks() {
     }
   }
 ]
-
+books.forEach(book => {
+  book.price = book.listPrice.amount
+  book.reviews = []
+})
         utilService.saveToStorage(BOOK_KEY, books)
     }
 }
